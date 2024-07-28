@@ -4,7 +4,8 @@ import importlib
 from Game import Game
 import pygame
 import sys
-from Bot import Bot
+import random
+
 
 # Constants
 WIDTH = 800
@@ -77,10 +78,11 @@ if __name__ == "__main__":
     if not Bot2:
         print("Failed to create bot2 object.")
         exit()
-
-    bot1 = Bot1(color=GREEN)
-    bot2 = Bot2(color=BLUE)
-    game = Game(bot1, bot2)
-    
+     
+    # Making sure the bots spawn in different sides of the game
+    bot1 = Bot1(x=random.randint(3, GRID_WIDTH / 2), y=random.randint(3, GRID_HEIGHT - 3), color=GREEN)
+    bot2 = Bot2(x=random.randint(GRID_WIDTH / 2 + 1, GRID_WIDTH - 3), y=random.randint(3, GRID_HEIGHT - 3), color=BLUE)
+   
+    game = Game(bot1, bot2) 
     gui_manager = GUIManager(game)
     gui_manager.start()

@@ -7,7 +7,7 @@ GRID_WIDTH = WIDTH // GRID_SIZE
 GRID_HEIGHT = HEIGHT // GRID_SIZE
 
 class Snake:
-    def __init__(self, x=random.randint(3, GRID_WIDTH - 3), y=random.randint(3, GRID_HEIGHT - 3), color=(random.randint(0,255), 255, 255)):
+    def __init__(self, x, y, color=(random.randint(0,255), 255, 255)):
         self.body = [(x, y), (x + 1, y)]
         self.curr_direction = random.choice(["UP", "DOWN", "LEFT", "RIGHT"])
         self.color = color

@@ -2,8 +2,8 @@ from Snake import Snake
 import random
 
 class Bot (Snake):
-    def __init__(self, color):
-        super().__init__(color=color)
+    def __init__(self, x, y, color):
+        super().__init__(x=x, y=y, color=color)
 
     # You may only change this function, (you may add helper functions)
     # This is an example function that plays completely randomly
