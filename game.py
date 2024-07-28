@@ -15,8 +15,7 @@ SNAKE2_WIN = "SNAKE2_WIN"
 SELF_KILL = 1
 WALL_KILL = 2
 STUCK_IN_PLAYER = 3
-TIE = 4
-        
+TIE = 4    
 
 class Game:
     def __init__(self, snake1, snake2):
@@ -30,6 +29,7 @@ class Game:
         self.food = self.spawn_food()
 
     def spawn_food(self):
+        # Spawning food in a random location that is not occupied by the snakes
         while True:
             food = (random.randint(0, GRID_WIDTH - 1), random.randint(0, GRID_HEIGHT - 1))
             if food not in self.snake1.body and food not in self.snake2.body:
@@ -40,7 +40,7 @@ class Game:
         snake1_col = self.check_collision_per_snake(self.snake1, self.snake2)
         snake2_col = self.check_collision_per_snake(self.snake2, self.snake1)
         
-        # Checking if both snakes collide with anything, if they both do at the same move, it's a tie
+        # Checking if there is a tie
         if self.check_tie(snake1_col, snake2_col):
             return TIE
         if snake1_col:
@@ -50,9 +50,10 @@ class Game:
         return False
     
     def check_tie(self, snake1_col, snake2_col):
-        # If the heads collide, it's a tie
+        # If the heads collide in the head, it's a tie
         if self.snake1.body[0] in self.snake2.body[0]:
             return TIE
+        # If both snakes collide with something at the same time, it's a tie
         if snake1_col and snake2_col:
             return TIE
         return False
@@ -72,15 +73,19 @@ class Game:
 
 
     def update(self):
+        # Getting direction before playing a move, so that one snake can't see the other snake's move
+        snake1_dir = self.snake1.get_direction(self.snake2.body, self.food)
+        snake2_dir = self.snake2.get_direction(self.snake1.body, self.food)
+        # Moving the snakes
+        self.snake1.move(snake1_dir)
+        self.snake2.move(snake2_dir)
+        # Checking if the snakes eat the food
         for snake in [self.snake1, self.snake2]:
-            snake.move()
             if snake.body[0] == self.food:
                 snake.grow = True
                 self.food = self.spawn_food()
-            snake.change_direction()  # Random movement
         collision = self.check_collision()
         if collision:
-            print("Game Over")
             print(collision)
             self.game_over = True
 

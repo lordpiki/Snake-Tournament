@@ -1,7 +1,7 @@
 from Game import Game
 import pygame
 import sys
-from Snake import Snake
+from Bot import Bot
 
 # Constants
 WIDTH = 800
@@ -55,8 +55,8 @@ class GUIManager:
         pygame.display.flip()
 
 if __name__ == "__main__":
-    bot1 = Snake(color=GREEN)
-    bot2 = Snake(color=BLUE)
+    bot1 = Bot(color=GREEN)
+    bot2 = Bot(color=BLUE)
     game = Game(bot1, bot2)
     
     gui_manager = GUIManager(game)
