@@ -3,13 +3,11 @@ import sys
 from Snake import Snake
 import random
 
-# Constants
 WIDTH = 800
 HEIGHT = 600
 GRID_SIZE = 20
 GRID_WIDTH = WIDTH // GRID_SIZE
 GRID_HEIGHT = HEIGHT // GRID_SIZE
-FPS = 30
 
 SNAKE1_WIN = "SNAKE1_WIN"
 SNAKE2_WIN = "SNAKE2_WIN"
@@ -18,15 +16,6 @@ SELF_KILL = 1
 WALL_KILL = 2
 STUCK_IN_PLAYER = 3
 TIE = 4
-
-# Colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-
-
         
 
 class Game:
@@ -62,7 +51,7 @@ class Game:
     
     def check_tie(self, snake1_col, snake2_col):
         # If the heads collide, it's a tie
-        if self.snake1.body[0] in self.other_snake.body[0]:
+        if self.snake1.body[0] in self.snake2.body[0]:
             return TIE
         if snake1_col and snake2_col:
             return TIE
@@ -95,34 +84,7 @@ class Game:
             print(collision)
             self.game_over = True
 
-    def draw(self):
-        self.screen.fill(BLACK)
-        for snake in [self.snake1, self.snake2]:
-            for index, segment in enumerate(snake.body):
-                if index == 0:
-                    pygame.draw.rect(self.screen, WHITE, (segment[0] * GRID_SIZE, segment[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
-                else:
-                    pygame.draw.rect(self.screen, snake.color, (segment[0] * GRID_SIZE, segment[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
-        pygame.draw.rect(self.screen, RED, (self.food[0] * GRID_SIZE, self.food[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
-        pygame.display.flip()
 
-    def run(self):
-        while not self.game_over:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-
-            self.update()
-            self.draw()
-            self.clock.tick(FPS)
-
-
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
 
 if __name__ == "__main__":
     game = Game()
