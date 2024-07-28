@@ -17,6 +17,7 @@ SNAKE2_WIN = "SNAKE2_WIN"
 SELF_KILL = 1
 WALL_KILL = 2
 STUCK_IN_PLAYER = 3
+TIE = 4
 
 # Colors
 BLACK = (0, 0, 0)
@@ -29,19 +30,15 @@ BLUE = (0, 0, 255)
         
 
 class Game:
-    def __init__(self):
+    def __init__(self, snake1, snake2):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Snake Bot Competition")
         self.clock = pygame.time.Clock()
-        self.reset_game()
-
-    def reset_game(self):
-        self.snake1 = Snake(GRID_WIDTH // 4, GRID_HEIGHT // 2, GREEN)
-        self.snake2 = Snake(3 * GRID_WIDTH // 4, GRID_HEIGHT // 2, BLUE)
-
-        self.food = self.spawn_food()
+        self.snake1 = snake1
+        self.snake2 = snake2
         self.game_over = False
+        self.food = self.spawn_food()
 
     def spawn_food(self):
         while True:
@@ -56,12 +53,25 @@ class Game:
             return SNAKE1_WIN
         return False
     
-    def check_collision_per_snake(self, snake1, snake2):
-        if snake1.body[0] in snake1.body[1:]:
+    def check_tie(self):
+        # If the heads collide, it's a tie
+        if self.snake1.body[0] in self.other_snake.body[0]:
+            return TIE
+        return False
+    
+    
+    def check_collision_per_snake(self, snake, other_snake):
+        # If the heads collide, it's a tie
+        if snake.body[0] in other_snake.body[0]:
+            return TIE
+        # Check if the snake collides with itself
+        if snake.body[0] in snake.body[1:]:
             return SELF_KILL
-        if snake1.body[0] in snake2.body:
+        # Check if the snake collides with the other snake
+        if snake.body[0] in other_snake.body:
             return STUCK_IN_PLAYER
-        if snake1.body[0][0] < 0 or snake1.body[0][0] >= GRID_WIDTH or snake1.body[0][1] < 0 or snake1.body[0][1] >= GRID_HEIGHT:
+        # Check if the snake collides with the wall
+        if snake.body[0][0] < 0 or snake.body[0][0] >= GRID_WIDTH or snake.body[0][1] < 0 or snake.body[0][1] >= GRID_HEIGHT:
             return WALL_KILL
         return False
 
