@@ -47,23 +47,29 @@ class Game:
                 return food
 
     def check_collision(self):
-        if self.check_collision_per_snake(self.snake1, self.snake2):
+        # Checking if the snakes collide with anything
+        snake1_col = self.check_collision_per_snake(self.snake1, self.snake2)
+        snake2_col = self.check_collision_per_snake(self.snake2, self.snake1)
+        
+        # Checking if both snakes collide with anything, if they both do at the same move, it's a tie
+        if self.check_tie(snake1_col, snake2_col):
+            return TIE
+        if snake1_col:
             return SNAKE2_WIN
-        if self.check_collision_per_snake(self.snake2, self.snake1):
+        if snake2_col:
             return SNAKE1_WIN
         return False
     
-    def check_tie(self):
+    def check_tie(self, snake1_col, snake2_col):
         # If the heads collide, it's a tie
         if self.snake1.body[0] in self.other_snake.body[0]:
+            return TIE
+        if snake1_col and snake2_col:
             return TIE
         return False
     
     
     def check_collision_per_snake(self, snake, other_snake):
-        # If the heads collide, it's a tie
-        if snake.body[0] in other_snake.body[0]:
-            return TIE
         # Check if the snake collides with itself
         if snake.body[0] in snake.body[1:]:
             return SELF_KILL
