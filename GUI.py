@@ -1,3 +1,6 @@
+import importlib
+
+
 from Game import Game
 import pygame
 import sys
@@ -54,9 +57,29 @@ class GUIManager:
         pygame.draw.rect(self.screen, RED, (self.game.food[0] * GRID_SIZE, self.game.food[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
         pygame.display.flip()
 
+def load_bot_from_file(filename:str = "Bot.py"):
+    try:
+        bot_module = importlib.import_module(filename[:-3])
+        bot_class = getattr(bot_module, "Bot")
+        return bot_class
+    except Exception as e:
+        print(e)
+        return None	
+
 if __name__ == "__main__":
-    bot1 = Bot(color=GREEN)
-    bot2 = Bot(color=BLUE)
+    
+    Bot1 = load_bot_from_file("Bot.py")
+    Bot2 = load_bot_from_file("Bot.py")
+    
+    if not Bot1:
+        print("Failed to create bot1 object.")
+        exit()
+    if not Bot2:
+        print("Failed to create bot2 object.")
+        exit()
+
+    bot1 = Bot1(color=GREEN)
+    bot2 = Bot2(color=BLUE)
     game = Game(bot1, bot2)
     
     gui_manager = GUIManager(game)
