@@ -1,5 +1,4 @@
 import pygame
-import sys
 from Snake import Snake
 import random
 
@@ -88,9 +87,3 @@ class Game:
         if collision:
             print(collision)
             self.game_over = True
-
-
-
-if __name__ == "__main__":
-    game = Game()
-    game.run()

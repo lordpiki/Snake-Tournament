@@ -1,6 +1,4 @@
 import importlib
-
-
 from Game import Game
 import pygame
 import sys
