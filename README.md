@@ -19,7 +19,7 @@ To participate in the Snake-Tournament, follow these steps:
 4. I will run all the bots against each other using the ELO rating system, and will annouce the winner at the end!
 
 ## Rules
-### The general rule is just participate normally, most these rules are just to stop you from being a dick
+### The general rule is just participate normally, most of these rules are just to stop you from being a dick
 - As part of the challenge, your function(s) will have to stay under 512 tokens! (To check how many tokens your code is, use the Token_Counter.py file which is provided). A Python token is a basic unit of code that represents a specific element, such as a keyword, identifier, operator, or literal value (e.g. `if`, `else`, `int`, etc..).
 - You can only change/add functions to the Bot class in the Bot.py file, any modifications to the rest of the code won't take into affect.
 - You must not include any libraries that will do the heavy lifting for you. You can only include libraries like math, random, etc..
