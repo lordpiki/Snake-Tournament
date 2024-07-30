@@ -18,16 +18,6 @@ class Bot (Snake):
         - str: The direction for the snake to move in. Can be one of "UP", "DOWN", "LEFT", or "RIGHT".
         
         """
-        
-        if self.body[0][0] < food[0] and self.curr_direction != "LEFT":
-            return "RIGHT"
-        elif self.body[0][0] > food[0] and self.curr_direction != "RIGHT":
-            return "LEFT"
-        elif self.body[0][1] < food[1] and self.curr_direction != "UP":
-            return "DOWN"
-        elif self.body[0][1] > food[1] and self.curr_direction != "DOWN":
-            return "UP"
-        
         return self.random_dir()
     
     
