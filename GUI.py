@@ -111,7 +111,8 @@ class Tournament:
     
     
 def main():
-    pass
+    tournamnet = Tournament()
+    tournamnet.run()
     # Choosing 2 bots at random
     # Making sure the bots spawn in different sides of the game
     # bot1 = random.choice(bot_classes)(x=random.randint(5, GRID_WIDTH / 2), y=random.randint(3, GRID_HEIGHT - 3), color=GREEN)
