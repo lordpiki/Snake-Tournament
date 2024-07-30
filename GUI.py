@@ -29,12 +29,13 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 class GUIManager:
-    def __init__(self, game: Game):
+    def __init__(self, game: Game, stop_on_end: bool=False):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Snake Bot Competition")
         self.clock = pygame.time.Clock()
         self.game = game
+        self.stop_on_end = stop_on_end
         self.run()
 
     def run(self):
@@ -47,6 +48,14 @@ class GUIManager:
             self.game.update()
             self.draw()
             self.clock.tick(FPS)
+            
+        # Check if user wants to close the window
+        if self.stop_on_end:
+            while True:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
 
     def draw(self):
         self.screen.fill(BLACK)
@@ -118,8 +127,14 @@ class Tournament:
             self.bot_rating[bot2] += K_FACTOR * (0.5 - expected_score2)
 
 def main():
-    tournament = Tournament()
-    tournament.run()
-
+    # tournament = Tournament()
+    # tournament.run()
+    
+    # If you want to just run the Tournament, uncomment the above lines and comment lines below
+    bot_class1 = Tournament.load_bot_from_file("Bots/randomBot.py")
+    bot_class2 = Tournament.load_bot_from_file("Bots/exampleBot.py")
+    game = Game(bot_class1(x=random.randint(5, GRID_WIDTH // 2), y=random.randint(3, GRID_HEIGHT - 3), color=GREEN), bot_class2(x=random.randint(GRID_WIDTH // 2, GRID_WIDTH - 5), y=random.randint(3, GRID_HEIGHT - 3), color=BLUE))
+    gui = GUIManager(game, True)
+    
 if __name__ == "__main__":
     main()
