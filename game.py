@@ -88,6 +88,16 @@ class Game:
                 snake.grow = True
                 self.food = self.spawn_food()
         collision = self.check_collision()
+        score1 = len(self.snake1.body)
+        score2 = len(self.snake2.body)
         if collision:
-            print(collision)
             self.game_over = True
+            return
+        if score1 > 20:
+            self.winner = SNAKE1_WIN
+            self.game_over = True
+            return         
+        if score2 > 20:
+            self.winner = SNAKE2_WIN
+            self.game_over = True
+            return

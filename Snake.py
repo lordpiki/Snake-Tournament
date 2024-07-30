@@ -21,13 +21,13 @@ class Snake:
         self.curr_direction = direction
         head = self.body[0]
         if direction == "UP":
-            new_head = (head[0] % GRID_WIDTH, (head[1] - 1) % GRID_HEIGHT)
+            new_head = (head[0], (head[1] - 1))
         elif direction == "DOWN":
-            new_head = (head[0] % GRID_WIDTH, (head[1] + 1) % GRID_HEIGHT)
+            new_head = (head[0], (head[1] + 1))
         elif direction == "LEFT":
-            new_head = ((head[0] - 1) % GRID_WIDTH, head[1] % GRID_HEIGHT)
+            new_head = ((head[0] - 1), head[1])
         else:  # RIGHT
-            new_head = ((head[0] + 1) % GRID_WIDTH, head[1] % GRID_HEIGHT)
+            new_head = ((head[0] + 1), head[1])
 
         self.body.insert(0, new_head)
         if not self.grow:

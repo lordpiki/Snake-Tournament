@@ -1,11 +1,13 @@
-import importlib
-import importlib.util
-import importlib.machinery
-from Game import Game, SNAKE1_WIN, SNAKE2_WIN, TIE
-import pygame
+import os
 import sys
 import random
-import os
+import importlib.util
+from typing import List, Type
+
+import pygame
+from Game import Game, SNAKE1_WIN, SNAKE2_WIN, TIE
+
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 K_FACTOR = 20
 
@@ -15,7 +17,9 @@ HEIGHT = 600
 GRID_SIZE = 20
 GRID_WIDTH = WIDTH // GRID_SIZE
 GRID_HEIGHT = HEIGHT // GRID_SIZE
-FPS = 165
+# Currently playing at 30 FPS (To be able to see the game normally)
+# You can increase the FPS to speed up the game
+FPS = 30
 
 # Colors
 BLACK = (0, 0, 0)
@@ -25,13 +29,15 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 class GUIManager:
-    def __init__(self, game):
+    def __init__(self, game: Game):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Snake Bot Competition")
         self.clock = pygame.time.Clock()
         self.game = game
-        # Initialing the screen
+        self.run()
+
+    def run(self):
         while not self.game.game_over:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -41,15 +47,13 @@ class GUIManager:
             self.game.update()
             self.draw()
             self.clock.tick(FPS)
-                    
+
     def draw(self):
         self.screen.fill(BLACK)
         for snake in [self.game.snake1, self.game.snake2]:
             for index, segment in enumerate(snake.body):
-                if index == 0:
-                    pygame.draw.rect(self.screen, WHITE, (segment[0] * GRID_SIZE, segment[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
-                else:
-                    pygame.draw.rect(self.screen, snake.color, (segment[0] * GRID_SIZE, segment[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
+                color = WHITE if index == 0 else snake.color
+                pygame.draw.rect(self.screen, color, (segment[0] * GRID_SIZE, segment[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(self.screen, RED, (self.game.food[0] * GRID_SIZE, self.game.food[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
         pygame.display.flip()
 
@@ -59,26 +63,27 @@ class Tournament:
         self.bot_classes = self.get_bot_classes(self.get_files_from_folder("Bots"))
         for bot_class in self.bot_classes:
             self.bot_rating[bot_class] = 200
-    
-    def run(self) -> dict:
+
+    def run(self):
         for bot_class in self.bot_classes:
-            for _ in range(10):
-                random_class = random.choice(self.bot_classes)
+            for _ in range(len(self.bot_classes) * 2):
+                random_class = random.choice([bot for bot in self.bot_classes if bot != bot_class])
                 winner = self.duel(bot_class, random_class)
                 self.calc_ratings(winner, bot_class, random_class)
-                print(self.bot_rating)
-        return self.bot_rating
-    
+        self.log_results()
+
+    def log_results(self):
+        with open("results.txt", "w") as f:
+            for bot_class, rating in self.bot_rating.items():
+                f.write(f"{str(bot_class)[8:-6]}: {int(rating)}\n")
+
     def duel(self, bot_class1, bot_class2):
-        # Putting the bots in different sides of the game
         bot1 = bot_class1(x=random.randint(5, GRID_WIDTH // 2), y=random.randint(3, GRID_HEIGHT - 3), color=GREEN)
         bot2 = bot_class2(x=random.randint(GRID_WIDTH // 2, GRID_WIDTH - 5), y=random.randint(3, GRID_HEIGHT - 3), color=BLUE)
         game = Game(bot1, bot2)
-        gui_manager = GUIManager(game)
-        winner = game.winner
-        return winner
-        
-    # Function to load bots from file path
+        GUIManager(game)
+        return game.winner
+
     @staticmethod
     def load_bot_from_file(filepath: str = "Bots/Bot.py"):
         try:
@@ -86,30 +91,19 @@ class Tournament:
             spec = importlib.util.spec_from_file_location(module_name, filepath)
             bot_module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(bot_module)
-            bot_class = getattr(bot_module, "Bot")
-            return bot_class
+            return getattr(bot_module, "Bot")
         except Exception as e:
-            print(e)
+            print(f"Error loading bot from {filepath}: {e}")
             return None
-    
+
     @staticmethod
     def get_files_from_folder(path: str = "."):
-        file_names = []
-        for file_name in os.listdir(path):
-            if file_name.endswith(".py"):
-                file_names.append(path + "/" + file_name)
-        return file_names
-    
+        return [os.path.join(path, file_name) for file_name in os.listdir(path) if file_name.endswith(".py")]
+
     @staticmethod
-    def get_bot_classes(file_names: list):
-        bot_classes = []
-        for file_name in file_names:
-            bot_class = Tournament.load_bot_from_file(file_name)
-            if bot_class:
-                bot_classes.append(bot_class)
-        return bot_classes
-    
-    # Calculate the new ratings of the bots using the Elo rating system
+    def get_bot_classes(file_names: List[str]):
+        return [Tournament.load_bot_from_file(file_name) for file_name in file_names if Tournament.load_bot_from_file(file_name)]
+
     def calc_ratings(self, winner, bot1, bot2):
         expected_score1 = 1 / (1 + 10 ** ((self.bot_rating[bot2] - self.bot_rating[bot1]) / 400))
         expected_score2 = 1 / (1 + 10 ** ((self.bot_rating[bot1] - self.bot_rating[bot2]) / 400))
@@ -122,18 +116,10 @@ class Tournament:
         else:
             self.bot_rating[bot1] += K_FACTOR * (0.5 - expected_score1)
             self.bot_rating[bot2] += K_FACTOR * (0.5 - expected_score2)
-    
+
 def main():
     tournament = Tournament()
     tournament.run()
-    # Choosing 2 bots at random
-    # Making sure the bots spawn in different sides of the game
-    # bot1 = random.choice(bot_classes)(x=random.randint(5, GRID_WIDTH / 2), y=random.randint(3, GRID_HEIGHT - 3), color=GREEN)
-    # bot2 = random.choice(bot_classes)(x=random.randint(GRID_WIDTH / 2, GRID_WIDTH - 5), y=random.randint(3, GRID_HEIGHT - 3), color=BLUE)
-   
-    # game = Game(bot1, bot2) 
-    # gui_manager = GUIManager(game)
-    # gui_manager.start()
 
 if __name__ == "__main__":
     main()
