@@ -13,6 +13,6 @@ def count_tokens(file_path):
     token_count = len(filtered_tokens)
     return token_count
 
-file_path = 'Bots/Bot.py'  # Replace with your file path
+file_path = 'Bots/exampleBot.py'  # Change this to the path of the file you want to count tokens for
 token_count = count_tokens(file_path)
 print(f"Number of tokens: {token_count}")
