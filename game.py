@@ -26,6 +26,7 @@ class Game:
         self.snake2 = snake2
         self.game_over = False
         self.food = self.spawn_food()
+        self.winner = None
 
     def spawn_food(self):
         # Spawning food in a random location that is not occupied by the snakes
@@ -41,10 +42,13 @@ class Game:
         
         # Checking if there is a tie
         if self.check_tie(snake1_col, snake2_col):
+            self.winner = TIE
             return TIE
         if snake1_col:
+            self.winner = SNAKE2_WIN
             return SNAKE2_WIN
         if snake2_col:
+            self.winner = SNAKE1_WIN
             return SNAKE1_WIN
         return False
     
