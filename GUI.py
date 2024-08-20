@@ -5,7 +5,7 @@ import importlib.util
 from typing import List, Type
 
 import pygame
-from Game import Game, SNAKE1_WIN, SNAKE2_WIN, TIE
+from game import Game, SNAKE1_WIN, SNAKE2_WIN, TIE
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
@@ -48,7 +48,7 @@ class GUIManager:
             self.game.update()
             self.draw()
             self.clock.tick(FPS)
-            
+
         # Check if user wants to close the window
         if self.stop_on_end:
             while True:
@@ -129,12 +129,12 @@ class Tournament:
 def main():
     # tournament = Tournament()
     # tournament.run()
-    
+
     # If you want to just run the Tournament, uncomment the above lines and comment lines below
     bot_class1 = Tournament.load_bot_from_file("Bots/randomBot.py")
     bot_class2 = Tournament.load_bot_from_file("Bots/exampleBot.py")
     game = Game(bot_class1(x=random.randint(5, GRID_WIDTH // 2), y=random.randint(3, GRID_HEIGHT - 3), color=GREEN), bot_class2(x=random.randint(GRID_WIDTH // 2, GRID_WIDTH - 5), y=random.randint(3, GRID_HEIGHT - 3), color=BLUE))
     gui = GUIManager(game, True)
-    
+
 if __name__ == "__main__":
     main()
